@@ -1,5 +1,5 @@
 const express = require('express');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const cors = require('cors')
 const app = express()
 const port = process.env.PORT || 5000;
@@ -42,7 +42,15 @@ async function run() {
       console.log('new user', user);
       const result = await userCollection.insertOne(user);
       res.send(result)
-      
+
+    })
+
+    app.delete('/users/:id', async (req, res) => {
+      const id = req.params.id;
+      console.log('delete from database', id);
+      const query = { _id: new ObjectId(id) }
+      const results = await userCollection.deleteOne(query);
+      res.send(results)
     })
 
     // Send a ping to confirm a successful connection
@@ -57,9 +65,9 @@ run().catch(console.dir);
 
 
 app.get('/', (req, res) => {
-    res.send('app server is running')
+  res.send('app server is running')
 })
 
 app.listen(port, () => {
-    console.log(`SIMPLE CRUD IS RUNNING ON PORT ${port}`);
+  console.log(`SIMPLE CRUD IS RUNNING ON PORT ${port}`);
 })
